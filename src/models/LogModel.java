@@ -1,12 +1,17 @@
 package models;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-public class LogModel extends TreeMap<String, ArrayList<String[]>> {
+import models.container.UserTraffic;
+
+public class LogModel extends TreeMap<String, ArrayList<UserTraffic>> {
 	ArrayList<String[]> arrayListUnsorted;
 	HashMap<String, ArrayList<String>> userTrafficMap;
+	SimpleDateFormat formatter;
 
 	public LogModel() {
 		arrayListUnsorted = new ArrayList<String[]>();
@@ -17,14 +22,23 @@ public class LogModel extends TreeMap<String, ArrayList<String[]>> {
 	}
 
 	public void filterDuplicateIPs() {
+
 		for (String[] entry : arrayListUnsorted) {
 			if (entry.length > 3) {
-				if (!containsKey(entry[0])) {
-					ArrayList<String[]> arrayListSorted = new ArrayList<String[]>();
-					arrayListSorted.add(new String[] { entry[1], entry[2], entry[3], entry[4] });
-					put(entry[0], arrayListSorted);
-				} else {
-					get(entry[0]).add(new String[] { entry[1], entry[2], entry[3], entry[4] });
+				try {
+					formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+					if (!containsKey(entry[0])) {
+						ArrayList<UserTraffic> arrayListSorted = new ArrayList<UserTraffic>();
+						arrayListSorted.add(new UserTraffic(formatter.parse(entry[2] + " " + entry[3]), Integer
+								.parseInt(entry[4]), entry[1]));
+						put(entry[0], arrayListSorted);
+					} else {
+						get(entry[0]).add(
+								new UserTraffic(formatter.parse(entry[2] + " " + entry[3]), Long.parseLong(entry[4]),
+										entry[1]));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			} else {
 				System.out.println("Array not complete for filtering!!");
@@ -32,21 +46,34 @@ public class LogModel extends TreeMap<String, ArrayList<String[]>> {
 		}
 	}
 
-
-	public TreeMap<String, ArrayList<String[]>> getLogList() {
+	public TreeMap<String, ArrayList<UserTraffic>> getLogList() {
 		return this;
 	}
 
-
 	public long calculateTrafficForIP(String ip, String direction) {
 		long bytes = 0;
-		ArrayList<String[]> values = get(ip);
+		ArrayList<UserTraffic> values = get(ip);
 		for (int j = 0; j < values.size(); j++) {
-			if (values.get(j)[0].equals(direction)) {
-				bytes += Integer.parseInt(values.get(j)[3]);
+			if (values.get(j).getDirection().equals(direction)) {
+				bytes += values.get(j).getTraffic();
 			}
 		}
 		return bytes;
+	}
+
+
+	public HashMap<Date, UserTraffic> calculateTrafficForDay(Date date, ArrayList<UserTraffic> trafficList, String direction) {
+		long bytes = 0;
+		SimpleDateFormat withoutTimeformatter = new SimpleDateFormat("yyyy-MM-dd");
+		HashMap<Date, UserTraffic> daylyTrafficList = new HashMap<Date, UserTraffic>();
+		for(int i=0; i <  trafficList.size(); i++ ) {
+			Date userDate = trafficList.get(i).getDate();
+			if(trafficList.get(i).getDirection().equals(direction) && withoutTimeformatter.format(date).equals(withoutTimeformatter.format(userDate))) {
+				 bytes+= trafficList.get(i).getTraffic();
+			}
+		}
+		daylyTrafficList.put(date, new UserTraffic(date, bytes, direction));
+		return daylyTrafficList;
 	}
 
 }

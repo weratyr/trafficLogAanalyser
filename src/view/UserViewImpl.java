@@ -10,14 +10,20 @@ public class UserViewImpl extends JPanel implements UserView {
 
 	public UserViewImpl() {
 		chart = new StackedBarChart();
-		chart.setData(12, 2011);
+		//HistogramChart chart1 = new HistogramChart("Historgram");
 		//add(new JLabel("Stuff für genaure Einstellungen"));
 		add(chart.getPanel());
+		//add(chart1.getPanel());
 	}
 
 	@Override
 	public JPanel asPanel() {
 		return this;
+	}
+
+	@Override
+	public StackedBarChart getChart() {
+		return chart;
 	}
 
 }

@@ -1,6 +1,7 @@
 package view.helperClasses;
 
 import java.awt.Dimension;
+import java.util.Date;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -20,15 +21,8 @@ public class StackedBarChart {
 
 	public StackedBarChart() {
 		timetablexydataset = new TimeTableXYDataset();
-	}
 
-	public void setData(int month, int year) {
-
-		for (int i = 1; i < 31; i++) {
-			 addToDataset(month, year, i);
-		}
-
-		JFreeChart jfreechart = createChart(timetablexydataset);
+		JFreeChart jfreechart = createStackedBarChart(timetablexydataset);
 		chartpanel = new ChartPanel(jfreechart);
 		chartpanel.setPreferredSize(new Dimension(500, 270));
 	}
@@ -37,18 +31,26 @@ public class StackedBarChart {
 		return chartpanel;
 	}
 
-	private void addToDataset(int month, int year, int i) {
-		timetablexydataset.add(new Day(i, month, year), 1.0D, "Series 1");
-		timetablexydataset.add(new Day(i, month, year), 1.7D, "Series 2");
+	public void addToDataset(Date date, long traffic, String serie) {
+		timetablexydataset.add(new Day(date), (traffic / 1000000), serie);
+		//System.out.println("add to time xy day:" + day + " Direc:" + serie + " traffic: " + (traffic/1000));
 	}
 
-	private JFreeChart createChart(TableXYDataset tablexydataset) {
+	public void resetDataset() {
+		timetablexydataset.clear();
+	}
+
+
+	private JFreeChart createStackedBarChart(TableXYDataset tablexydataset) {
 		DateAxis dateaxis = new DateAxis("Date");
+		dateaxis.setLabel("Traffic in MBytes");
+
 		dateaxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
-		NumberAxis numberaxis = new NumberAxis("Y");
-		StackedXYBarRenderer stackedxybarrenderer = new StackedXYBarRenderer(0.10000000000000001D);
-		stackedxybarrenderer.setDrawBarOutline(false);
+		NumberAxis numberaxis = new NumberAxis();
+		numberaxis.setAutoRangeMinimumSize(0.1D);
+		StackedXYBarRenderer stackedxybarrenderer = new StackedXYBarRenderer(0.1D);
 		XYPlot xyplot = new XYPlot(tablexydataset, dateaxis, numberaxis, stackedxybarrenderer);
+
 		JFreeChart jfreechart = new JFreeChart("Monatlicher Traffic", xyplot);
 		return jfreechart;
 	}

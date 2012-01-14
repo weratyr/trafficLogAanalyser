@@ -65,7 +65,6 @@ public class AppController implements Controller, AppLayoutView.Controller {
 			 String userIP = "";
 			 for( String key : model.keySet()) {
 				 if(i == selectedTableRow) {
-					 System.out.println(key);
 					 userIP = key;
 				 }
 				 i++;
@@ -89,10 +88,14 @@ public class AppController implements Controller, AppLayoutView.Controller {
 						System.out.println("File not exist!!");
 						System.exit(0);
 					}
+					model.clear();
+					view.resetTable();
+					System.out.println();
+
 					readDBFile();
 					model.filterDuplicateIPs();
 					view.updateUI();
-					// view.resetTable();
+
 				}
 			}
 		}

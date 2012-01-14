@@ -11,4 +11,5 @@ public interface AppLayoutView {
 	void setController(Controller controller);
 	JComponent asContainer();
   JTable getViewTable();
+  void resetTable();
 }

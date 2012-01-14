@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import models.LogModel;
+import models.container.UserTraffic;
 import view.helperClasses.MyMenuBar;
 
 public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
@@ -53,9 +54,6 @@ public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
 		jsp.setVisible(true);
 		jsp.setSize(700, 200);
 
-
-
-
 		getContentPane().add(container, BorderLayout.CENTER);
 
 		container.add(jsp);
@@ -87,13 +85,18 @@ public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
 		return this.container;
 	}
 
+	@Override
 	public void resetTable() {
-		resultTable.removeAll();
+		for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
+			tableModel.removeRow(i);
+		}
 	}
 
 	public void setLogResultToTable() {
-		for (Entry<String, ArrayList<String[]>> entrys : model.getLogList().entrySet()) {
-			tableModel.addRow(new Object[] { entrys.getKey(), "", (model.calculateTrafficForIP(entrys.getKey(), "OUT") / 1000000), (model.calculateTrafficForIP(entrys.getKey(), "IN") / 1000000) });
+		for (Entry<String, ArrayList<UserTraffic>> entrys : model.getLogList().entrySet()) {
+			tableModel.addRow(new Object[] { entrys.getKey(), "",
+					(model.calculateTrafficForIP(entrys.getKey(), "OUT") / 1000000),
+					(model.calculateTrafficForIP(entrys.getKey(), "IN") / 1000000) });
 		}
 	}
 
