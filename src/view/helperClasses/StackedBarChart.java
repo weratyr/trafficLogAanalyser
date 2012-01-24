@@ -24,7 +24,7 @@ public class StackedBarChart {
 
 		JFreeChart jfreechart = createStackedBarChart(timetablexydataset);
 		chartpanel = new ChartPanel(jfreechart);
-		chartpanel.setPreferredSize(new Dimension(500, 270));
+		chartpanel.setPreferredSize(new Dimension(500, 370));
 	}
 
 	public ChartPanel getPanel() {

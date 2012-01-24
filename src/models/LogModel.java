@@ -10,7 +10,6 @@ import models.container.UserTraffic;
 
 public class LogModel extends TreeMap<String, ArrayList<UserTraffic>> {
 	ArrayList<String[]> arrayListUnsorted;
-	HashMap<String, ArrayList<String>> userTrafficMap;
 	SimpleDateFormat formatter;
 
 	public LogModel() {
@@ -19,6 +18,11 @@ public class LogModel extends TreeMap<String, ArrayList<UserTraffic>> {
 
 	public void addEntryToLogList(String ip, String date, String time, String bytes, String direction) {
 		arrayListUnsorted.add(new String[] { ip, direction, date, time, bytes });
+	}
+
+	public void resetDatabase() {
+		clear();
+		arrayListUnsorted.clear();
 	}
 
 	public void filterDuplicateIPs() {

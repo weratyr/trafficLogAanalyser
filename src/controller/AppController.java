@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -15,6 +17,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import models.LogModel;
+import models.container.UserTraffic;
 import view.AppLayoutView;
 import view.AppLayoutViewImpl;
 import view.UserView;
@@ -41,10 +44,10 @@ public class AppController implements Controller, AppLayoutView.Controller {
 
 		container = view.asContainer();
 		view.setController(this);
-		 dbFileExists();
-		 readDBFile();
-		 model.filterDuplicateIPs();
-		view.updateUI();
+//		 dbFileExists();
+//		 readDBFile();
+//		 model.filterDuplicateIPs();
+//		view.updateUI();
 		bind();
 	}
 
@@ -88,9 +91,8 @@ public class AppController implements Controller, AppLayoutView.Controller {
 						System.out.println("File not exist!!");
 						System.exit(0);
 					}
-					model.clear();
-					view.resetTable();
-					System.out.println();
+					model.resetDatabase();
+					view.resetTableView();
 
 					readDBFile();
 					model.filterDuplicateIPs();
@@ -132,6 +134,16 @@ public class AppController implements Controller, AppLayoutView.Controller {
 			}
 		} catch (Exception e) {
 			System.out.println(e);
+		}
+	}
+
+
+	@Override
+	public void setLogResultToTable() {
+		for (Entry<String, ArrayList<UserTraffic>> entrys : model.getLogList().entrySet()) {
+			view.getViewTableModel().addRow(new Object[] { entrys.getKey(),
+					(model.calculateTrafficForIP(entrys.getKey(), "OUT") / 1000000),
+					(model.calculateTrafficForIP(entrys.getKey(), "IN") / 1000000) });
 		}
 	}
 

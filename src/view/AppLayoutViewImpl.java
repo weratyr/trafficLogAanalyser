@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -18,7 +16,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import models.LogModel;
-import models.container.UserTraffic;
 import view.helperClasses.MyMenuBar;
 
 public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
@@ -45,7 +42,6 @@ public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
 
 		tableModel = new DefaultTableModel();
 		tableModel.addColumn("IP");
-		tableModel.addColumn("");
 		tableModel.addColumn("Output Bytes in MB");
 		tableModel.addColumn("In Bytes in MB");
 
@@ -70,7 +66,7 @@ public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
 	}
 
 	public void updateUI() {
-		setLogResultToTable();
+		controller.setLogResultToTable();
 	}
 
 	public void setMenuOeffenenListener(ActionListener listener) {
@@ -86,17 +82,9 @@ public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
 	}
 
 	@Override
-	public void resetTable() {
+	public void resetTableView() {
 		for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
 			tableModel.removeRow(i);
-		}
-	}
-
-	public void setLogResultToTable() {
-		for (Entry<String, ArrayList<UserTraffic>> entrys : model.getLogList().entrySet()) {
-			tableModel.addRow(new Object[] { entrys.getKey(), "",
-					(model.calculateTrafficForIP(entrys.getKey(), "OUT") / 1000000),
-					(model.calculateTrafficForIP(entrys.getKey(), "IN") / 1000000) });
 		}
 	}
 
@@ -117,6 +105,11 @@ public class AppLayoutViewImpl extends JFrame implements AppLayoutView {
 	@Override
 	public JTable getViewTable() {
 		return resultTable;
+	}
+
+	@Override
+	public DefaultTableModel getViewTableModel() {
+		return tableModel;
 	}
 
 }
